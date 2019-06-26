@@ -1,7 +1,7 @@
 <template>
 <div>
  <p><pre>{{cards}}</pre></p>
-   <button v-on:click="shuffle()">Shuffle Cards</button>
+ <button v-on:click="shuffle()">Shuffle Cards</button>
 </div>
 </template>
 <script>
@@ -21,7 +21,6 @@ export default {
   },
   data: ()=> {
     return {
-      shuffledDeck: [],
       cards:[],
 		}
   },
@@ -29,16 +28,16 @@ export default {
     shuffle() {
       var cardDeck = this.cards;
       cardDeck.forEach((card, index) => {
-        let randomIndex = Math.floor(Math.random() * index);
         let temp = cardDeck[index];
-        cardDeck[randomIndex] = temp;
-        this.cards = cardDeck
+        let randomIndex = Math.floor(Math.random() * index);
+  
+         Vue.set(this.cards, index, this.cards[randomIndex]);
+         Vue.set(this.cards, randomIndex, temp);
       });
     }
   },
   
 }
-
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
