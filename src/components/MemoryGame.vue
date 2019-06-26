@@ -1,14 +1,17 @@
 <template>
-   <p><pre>{{cards}}</pre></p>
+<div>
+ <p><pre>{{cards}}</pre></p>
+   <button v-on:click="shuffle()">Shuffle Cards</button>
+</div>
 </template>
-
 <script>
-import gql from 'graphql-tag'
+import Vue from "vue";
+import gql from "graphql-tag";
 
 export default {
-  apollo: {
-    // Simple query that will update the 'hello' vue property
-    cards: gql`query {
+  name: "MemoryGame",
+    apollo: {
+    cards: gql`query{
       cards {
           id
           value 
@@ -16,7 +19,26 @@ export default {
       }
     }`,
   },
+  data: ()=> {
+    return {
+      shuffledDeck: [],
+      cards:[],
+		}
+  },
+  methods: {
+    shuffle() {
+      var cardDeck = this.cards;
+      cardDeck.forEach((card, index) => {
+        let randomIndex = Math.floor(Math.random() * index);
+        let temp = cardDeck[index];
+        cardDeck[randomIndex] = temp;
+        this.cards = cardDeck
+      });
+    }
+  },
+  
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
