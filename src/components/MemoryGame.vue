@@ -5,17 +5,21 @@
         v-for="card in cards"
         v-bind:item="card"
         v-bind:key="card.id"
-        v-on:click="flip(card.id)"
-         v-bind:class="{
-          cardFront: flippedCards.includes(card.id),
-          heart: card.suit === 'hearts',
-          spades: card.suit === 'spades',
-          clubs: card.suit === 'clubs',
-          diamonds: card.suit === 'diamonds',       
+        v-on:click="flip(card)"
+        v-bind:class="{
+         cardFront: flipCard(card),
+         heart: card.suit === 'hearts',
+         spades: card.suit === 'spades',
+         clubs: card.suit === 'clubs',
+         diamonds: card.suit === 'diamonds',       
         }"
         class="card"
         >
-      <div v-if="flippedCards.includes(card.id)">{{ card.value }}</div>
+      <div 
+        v-if="flipCard(card)"
+        >
+          {{ card.value }}
+        </div>
     </div>
   </div>
   <button v-on:click="shuffle()">Shuffle Cards</button>
@@ -38,21 +42,26 @@ export default {
       }
     `
   },
-  data: () => {
+  data () {
     return {
       cards: [],
       flippedCards: [],
     };
   },
   methods: {
-    flip: function(el) {
-      this.flippedCards.push(el);
+    flip (chosenCard) {
+      this.flippedCards.push(chosenCard);
       if(this.flippedCards.length == 3) {
         this.flippedCards = [];
-        this.flippedCards.push(el);
+        this.flippedCards.push(chosenCard);
       }   
     },
-    shuffle: function() {
+    flipCard (chosenCard) {
+        if(this.flippedCards.find(flippedCard => flippedCard.id === chosenCard.id)){
+        return true;
+      }
+    },
+    shuffle () {
       var cardDeck = this.cards;
       cardDeck.forEach((card, index) => {
         let temp = cardDeck[index];
