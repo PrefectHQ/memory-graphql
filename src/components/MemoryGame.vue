@@ -20,6 +20,7 @@
         </div>
       </div>
     </div>
+    <div>Score: {{score}}</div>
     <button v-on:click="shuffle()">Shuffle Cards</button>
   </div>
 </template>
@@ -44,7 +45,8 @@ export default {
     return {
       cards: [],
       flippedCards: [],
-      matchedCards: []
+      matchedCards: [],
+      score: 0,
     };
   },
   methods: {
@@ -56,7 +58,7 @@ export default {
              this.matchedCards = this.flippedCards.slice();
           }
           else {
-             this.flippedCards = this.matchedCards;
+           this.matchedCards = this.matchedCards.concat(this.flippedCards);
           }
         }
       }
@@ -66,10 +68,14 @@ export default {
             this.flippedCards.push(chosenCard);
           }
         }
+
+        this.score = this.matchedCards.length / 2;
     },
     flipCard(chosenCard) {
       if (
-        this.flippedCards.find(flippedCard => flippedCard.id === chosenCard.id)
+        this.flippedCards.find(flippedCard => flippedCard.id === chosenCard.id) ||
+         this.matchedCards.find(matchedCard => matchedCard.id === chosenCard.id)
+
       ) {
         return true;
       }
@@ -97,14 +103,12 @@ export default {
       return "black";
     },
     cardColorMatch() {
-      if (this.flippedCards.length === 2) {
         if (
           this.getCardColor(this.flippedCards[0]) ===
           this.getCardColor(this.flippedCards[1])
         ) {
           return true;
         }
-      }
       return false;
     }
   }
