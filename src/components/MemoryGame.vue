@@ -7,23 +7,21 @@
         v-bind:key="card.id"
         v-on:click="flip(card)"
         v-bind:class="{
-         cardFront: flipCard(card),
-         heart: card.suit === 'hearts',
-         spades: card.suit === 'spades',
-         clubs: card.suit === 'clubs',
-         diamonds: card.suit === 'diamonds',       
+          cardFront: flipCard(card),
+          heart: card.suit === 'hearts',
+          spades: card.suit === 'spades',
+          clubs: card.suit === 'clubs',
+          diamonds: card.suit === 'diamonds'
         }"
         class="card"
-        >
-      <div 
-        v-if="flipCard(card)"
-        >
+      >
+        <div v-if="flipCard(card)">
           {{ card.value }}
         </div>
+      </div>
     </div>
+    <button v-on:click="shuffle()">Shuffle Cards</button>
   </div>
-  <button v-on:click="shuffle()">Shuffle Cards</button>
- </div>
 </template>
 <script>
 import Vue from "vue";
@@ -42,26 +40,41 @@ export default {
       }
     `
   },
-  data () {
+  data() {
     return {
       cards: [],
       flippedCards: [],
+      matchedCards: []
     };
   },
   methods: {
-    flip (chosenCard) {
+    flip(chosenCard) {
       this.flippedCards.push(chosenCard);
-      if(this.flippedCards.length == 3) {
-        this.flippedCards = [];
-        this.flippedCards.push(chosenCard);
-      }   
+      if (this.flippedCards.length === 2) {
+        if (this.cardValueMatch() && this.cardColorMatch(chosenCard)) {
+          if(this.matchedCards.length < 2) {
+             this.matchedCards = this.flippedCards.slice();
+          }
+          else {
+             this.flippedCards = this.matchedCards;
+          }
+        }
+      }
+      else {
+          if (this.flippedCards.length == 3) {
+            this.flippedCards = [];
+            this.flippedCards.push(chosenCard);
+          }
+        }
     },
-    flipCard (chosenCard) {
-        if(this.flippedCards.find(flippedCard => flippedCard.id === chosenCard.id)){
+    flipCard(chosenCard) {
+      if (
+        this.flippedCards.find(flippedCard => flippedCard.id === chosenCard.id)
+      ) {
         return true;
       }
     },
-    shuffle () {
+    shuffle() {
       var cardDeck = this.cards;
       cardDeck.forEach((card, index) => {
         let temp = cardDeck[index];
@@ -70,6 +83,29 @@ export default {
         Vue.set(this.cards, index, this.cards[randomIndex]);
         Vue.set(this.cards, randomIndex, temp);
       });
+    },
+    cardValueMatch() {
+      if (this.flippedCards[0].value === this.flippedCards[1].value) {
+        return true;
+      }
+      return false;
+    },
+    getCardColor(card) {
+      if (card.suit === "diamonds" || card.suit === "hearts") {
+        return "red";
+      }
+      return "black";
+    },
+    cardColorMatch() {
+      if (this.flippedCards.length === 2) {
+        if (
+          this.getCardColor(this.flippedCards[0]) ===
+          this.getCardColor(this.flippedCards[1])
+        ) {
+          return true;
+        }
+      }
+      return false;
     }
   }
 };
@@ -78,7 +114,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 
 <style scoped lang="scss">
-
 .cardDeck {
   display: flex;
   flex-direction: row;
@@ -92,7 +127,7 @@ export default {
     border-radius: 15px;
     text-align: center;
     box-shadow: 2px 2px 5px #a5a0a0;
-    margin: .5em;
+    margin: 0.5em;
     transition: box-shadow 0.5s;
     overflow: auto;
 
@@ -100,34 +135,34 @@ export default {
       background: #c7dfe2;
 
       &.heart {
-      &:before {
-        content: "♥";
-        color: red;
+        &:before {
+          content: "♥";
+          color: red;
+        }
+      }
+
+      &.spades {
+        &:before {
+          content: "♠";
+          color: black;
+        }
+      }
+
+      &.clubs {
+        &:before {
+          content: "♣";
+          color: black;
+        }
+      }
+
+      &.diamonds {
+        &:before {
+          content: "♦";
+          color: red;
+        }
       }
     }
-
-    &.spades {
-      &:before {
-        content: "♠";
-        color: black;
-      }
-    }
-
-    &.clubs {
-      &:before {
-        content: "♣";
-        color: black;
-      }
-    }
-
-    &.diamonds {
-      &:before {
-        content: "♦";
-        color: red;
-      }
-     }
-   }
- }
+  }
 }
 button {
   display: block;

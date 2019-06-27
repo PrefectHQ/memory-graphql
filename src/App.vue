@@ -1,7 +1,5 @@
 <template>
-  <div id="app" class="app">
-    <MemoryGame /> `
-  </div>
+  <div id="app" class="app"><MemoryGame /> `</div>
 </template>
 
 <script>
