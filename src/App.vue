@@ -1,6 +1,5 @@
 <template>
   <div id="app" class="app">
-    <img class="logo" alt="Vue logo" src="./assets/logomark-color.svg" />
     <MemoryGame /> `
   </div>
 </template>
