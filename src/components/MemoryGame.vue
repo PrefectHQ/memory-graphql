@@ -5,18 +5,17 @@
         v-for="card in cards"
         v-bind:item="card"
         v-bind:key="card.id"
+        v-on:click="flip(card.id)"
+         v-bind:class="{
+          cardFront: flippedCards.includes(card.id),
+          heart: card.suit === 'hearts',
+          spades: card.suit === 'spades',
+          clubs: card.suit === 'clubs',
+          diamonds: card.suit === 'diamonds',       
+        }"
         class="card"
-          v-on:click="flip(card.id)"
-          :class="{
-            heart: card.suit === 'hearts',
-            spades: card.suit === 'spades',
-            clubs: card.suit === 'clubs',
-            diamonds: card.suit === 'diamonds',
-            joker: card.suit === 'joker',
-            cardFront: flippedCard == card.id
-          }"
         >
-      <div v-if="card.id==flippedCard">{{ card.value }}</div>
+      <div v-if="flippedCards.includes(card.id)">{{ card.value }}</div>
     </div>
   </div>
   <button v-on:click="shuffle()">Shuffle Cards</button>
@@ -42,12 +41,16 @@ export default {
   data: () => {
     return {
       cards: [],
-      flippedCard: 0,
+      flippedCards: [],
     };
   },
   methods: {
     flip: function(el) {
-      this.flippedCard = el;
+      this.flippedCards.push(el);
+      if(this.flippedCards.length == 3) {
+        this.flippedCards = [];
+        this.flippedCards.push(el);
+      }   
     },
     shuffle: function() {
       var cardDeck = this.cards;
@@ -71,19 +74,6 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  .cardFront {
-    color: red;
-    .card {
-      .heart,
-      .diamonds,
-      .clubs,
-      .spades {
-        &:before {
-          content: none;
-        }
-      }
-    }
-  }
   .card {
     border: solid #fff 2px;
     width: 5em;
@@ -97,29 +87,31 @@ export default {
     transition: box-shadow 0.5s;
     overflow: auto;
 
-    .cardFront {
-      .heart {
+    &.cardFront {
+      background: #c7dfe2;
+
+      &.heart {
       &:before {
         content: "♥";
         color: red;
       }
     }
 
-    .spades {
+    &.spades {
       &:before {
         content: "♠";
         color: black;
       }
     }
 
-    .clubs {
+    &.clubs {
       &:before {
         content: "♣";
         color: black;
       }
     }
 
-    .diamonds {
+    &.diamonds {
       &:before {
         content: "♦";
         color: red;
