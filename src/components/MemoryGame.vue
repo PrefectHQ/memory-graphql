@@ -1,5 +1,8 @@
 <template>
   <div class="memory">
+    <div>Score: {{ score }}</div>
+    <div v-if="score === 27">Congratulations! You Won</div>
+    <button v-on:click="shuffle()">Shuffle Cards</button>
     <div class="cardDeck">
       <div
         class="card"
@@ -14,16 +17,12 @@
           clubs: card.suit === 'clubs',
           diamonds: card.suit === 'diamonds'
         }"
-        
       >
-        <div v-if="flipCard(card)">
+        <div class="card-value" v-if="flipCard(card)">
           {{ card.value }}
         </div>
       </div>
     </div>
-    <div>Score: {{ score }}</div>
-    <div v-if="score === 27">Congratulations! You Won</div>
-    <button v-on:click="shuffle()">Shuffle Cards</button>
   </div>
 </template>
 <script>
@@ -49,7 +48,8 @@ export default {
       flippedCards: [],
       matchedCards: [],
       matchedSet: [],
-      score: 0
+      score: 0,
+      cardsShuffled: false
     };
   },
   methods: {
@@ -59,7 +59,7 @@ export default {
 
       if (this.flippedCards.length === 2) {
         if (this.cardValueMatch() && this.cardColorMatch(chosenCard)) {
-            this.matchedSet = this.flippedCards.slice();
+          this.matchedSet = this.flippedCards.slice();
           if (this.matchedCards.length < 2) {
             this.matchedCards = this.flippedCards.slice();
           } else {
@@ -85,12 +85,13 @@ export default {
     },
     shuffle() {
       var cardDeck = this.cards;
+      this.cardsShuffled = true;
       cardDeck.forEach(function(card, index) {
         let temp = cardDeck[index];
         let randomIndex = Math.floor(Math.random() * index);
 
-        Vue.set(this.cards, index, this.cards[randomIndex]);
-        Vue.set(this.cards, randomIndex, temp);
+        Vue.set(cardDeck, index, cardDeck[randomIndex]);
+        Vue.set(cardDeck, randomIndex, temp);
       });
     },
     cardValueMatch() {
@@ -124,9 +125,6 @@ export default {
         return true;
       }
       return false;
-    },
-    resetGame() {
-      this.$apollo.queries.cards.refresh();
     }
   }
 };
@@ -154,6 +152,14 @@ export default {
 
     &.cardFront {
       background: #c7dfe2;
+
+      &:before {
+        font-size: 2em;
+      }
+
+      .card-value {
+        font-size: 1.5em;
+      }
 
       &.heart {
         &:before {
