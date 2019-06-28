@@ -20,7 +20,8 @@
         </div>
       </div>
     </div>
-    <div>Score: {{score}}</div>
+    <div>Score: {{ score }}</div>
+    <div v-if="score === 27">Congratulations! You Won</div>
     <button v-on:click="shuffle()">Shuffle Cards</button>
   </div>
 </template>
@@ -46,43 +47,54 @@ export default {
       cards: [],
       flippedCards: [],
       matchedCards: [],
-      score: 0,
+      matchedSet: [],
+      score: 0
     };
   },
   methods: {
     flip(chosenCard) {
+      var cardIndex;
+      var cards = this.cards;
       this.flippedCards.push(chosenCard);
+     
+      if (this.matchedSet) {
+        this.matchedSet.forEach(function(matchedCard) {
+          cardIndex = cards.findIndex(card => card.id === matchedCard.id);
+          cards.splice(cardIndex, 1);
+        });
+      } else {
+        this.matchedSet = [];
+      }
+
       if (this.flippedCards.length === 2) {
         if (this.cardValueMatch() && this.cardColorMatch(chosenCard)) {
-          if(this.matchedCards.length < 2) {
-             this.matchedCards = this.flippedCards.slice();
+          if (this.matchedCards.length < 3) {
+            this.matchedSet = this.flippedCards.slice();
+            this.matchedCards = this.flippedCards.slice();
+          } else {
+            this.matchedCards = this.matchedCards.concat(this.flippedCards);
           }
-          else {
-           this.matchedCards = this.matchedCards.concat(this.flippedCards);
-          }
+        }
+      } else {
+        if (this.flippedCards.length === 3) {
+          this.matchedSet = [];
+          this.flippedCards = [];
+          this.flippedCards.push(chosenCard);
         }
       }
-      else {
-          if (this.flippedCards.length == 3) {
-            this.flippedCards = [];
-            this.flippedCards.push(chosenCard);
-          }
-        }
 
-        this.score = this.matchedCards.length / 2;
+      this.score = this.matchedCards.length / 2;
     },
     flipCard(chosenCard) {
       if (
-        this.flippedCards.find(flippedCard => flippedCard.id === chosenCard.id) ||
-         this.matchedCards.find(matchedCard => matchedCard.id === chosenCard.id)
-
+        this.flippedCards.find(flippedCard => flippedCard.id === chosenCard.id)
       ) {
         return true;
       }
     },
     shuffle() {
       var cardDeck = this.cards;
-      cardDeck.forEach((card, index) => {
+      cardDeck.forEach(function(card, index) {
         let temp = cardDeck[index];
         let randomIndex = Math.floor(Math.random() * index);
 
@@ -103,12 +115,12 @@ export default {
       return "black";
     },
     cardColorMatch() {
-        if (
-          this.getCardColor(this.flippedCards[0]) ===
-          this.getCardColor(this.flippedCards[1])
-        ) {
-          return true;
-        }
+      if (
+        this.getCardColor(this.flippedCards[0]) ===
+        this.getCardColor(this.flippedCards[1])
+      ) {
+        return true;
+      }
       return false;
     }
   }
