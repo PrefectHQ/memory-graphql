@@ -1,12 +1,13 @@
-import { shallowMount } from "@vue/test-utils";
+import {shallowMount } from "@vue/test-utils";
 import MemoryGame from "@/components/MemoryGame.vue";
 
+
 describe("MemoryGame.vue", () => {
-  it("renders props.msg when passed", () => {
-    const msg = "new message";
-    const wrapper = shallowMount(MemoryGame, {
-      propsData: { msg }
-    });
-    expect(wrapper.text()).toMatch(msg);
-  });
+  const wrapper = shallowMount(MemoryGame)
+  it('Check the cardDeck exists', () => {
+    expect(wrapper.find('.cardDeck').exists()).toBe(true);
+  }),
+  it('Check the cardDeck exists', () => {
+    expect(wrapper.find('.cardDeck').contains('div')).toBe(true);
+  })
 });

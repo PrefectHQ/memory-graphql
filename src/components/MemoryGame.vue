@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div class="memory">
     <div class="cardDeck">
       <div
+        class="card"
         v-for="card in cards"
         v-bind:item="card"
         v-bind:key="card.id"
@@ -13,7 +14,7 @@
           clubs: card.suit === 'clubs',
           diamonds: card.suit === 'diamonds'
         }"
-        class="card"
+        
       >
         <div v-if="flipCard(card)">
           {{ card.value }}
@@ -53,23 +54,13 @@ export default {
   },
   methods: {
     flip(chosenCard) {
-      var cardIndex;
-      var cards = this.cards;
       this.flippedCards.push(chosenCard);
-     
-      if (this.matchedSet) {
-        this.matchedSet.forEach(function(matchedCard) {
-          cardIndex = cards.findIndex(card => card.id === matchedCard.id);
-          cards.splice(cardIndex, 1);
-        });
-      } else {
-        this.matchedSet = [];
-      }
+      this.getMatchedSet();
 
       if (this.flippedCards.length === 2) {
         if (this.cardValueMatch() && this.cardColorMatch(chosenCard)) {
-          if (this.matchedCards.length < 3) {
             this.matchedSet = this.flippedCards.slice();
+          if (this.matchedCards.length < 2) {
             this.matchedCards = this.flippedCards.slice();
           } else {
             this.matchedCards = this.matchedCards.concat(this.flippedCards);
@@ -108,6 +99,17 @@ export default {
       }
       return false;
     },
+    getMatchedSet() {
+      var cardIndex;
+      if (this.matchedSet) {
+        this.matchedSet.forEach(matchedCard => {
+          cardIndex = this.cards.findIndex(card => card.id === matchedCard.id);
+          this.cards.splice(cardIndex, 1);
+        });
+      } else {
+        this.matchedSet = [];
+      }
+    },
     getCardColor(card) {
       if (card.suit === "diamonds" || card.suit === "hearts") {
         return "red";
@@ -122,6 +124,9 @@ export default {
         return true;
       }
       return false;
+    },
+    resetGame() {
+      this.$apollo.queries.cards.refresh();
     }
   }
 };
