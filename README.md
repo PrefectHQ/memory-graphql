@@ -19,7 +19,7 @@ Because this repository is public, all of it's forks are public. Instead, please
 
 ### To Submit
 
-1. Add github user `dylanbhughes` as a collaborator to your private repository
+1. Add github user `znicholasbrown` as a collaborator to your private repository
 
 ### The Game
 
@@ -67,6 +67,7 @@ This repository includes an Apollo GraphQL server. Much of the code that impleme
 
 ```bash
 nvm install
+nvm use
 npm install
 ```
 
